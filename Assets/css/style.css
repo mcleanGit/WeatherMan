@@ -1,4 +1,51 @@
+/* first round of css for other html elements */
 .title-banner {
  background-color: blue;
  color: white;
+}
+
+input {
+ margin-left: 5px;
+}
+
+button {
+ background-color: blue;
+ border: 2px solid blue;
+ color: white;
+ border-radius: 5px;
+ padding: 2px 8px 2px 8px;
+}
+
+button:active {
+ background-color: cornflowerblue;
+}
+
+button:hover {
+ border: 2px solid rgb(53, 53, 53);
+}
+
+.list-group-item {
+ background-color: grey;
+ border: none;
+ color: black;
+ border-radius: 5 px;
+}
+
+
+.card-body {
+ border: solid black 1px;
+ background-color: transparent;
+}
+/*
+.clear {
+ background-color: rgb(161, 63, 63);
+ border: 2px solid rgb(161, 63, 63);
+}
+
+.clear:active {
+ background-color: rgb(107, 42, 42);
+}
+*/
+.list-group-item:active {
+ background-color: rgb(71, 107, 173);
 }
