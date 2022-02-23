@@ -1,9 +1,29 @@
 // js for WeatherMan rev 2022-02-06
 // Open Weather API key; global variables
-var url = "https://api.openweathermap.org/data/2.5/weather?q=" +cityName + "&units=metric&APPID=76d9b9b69f8abf37f5df04749953bfe4";
+var url = "https://api.openweathermap.org";
 var key = "76d9b9b69f8abf37f5df04749953bfe4";
-var searchHistoryId = 0;
-var cityName = [[0]="Toronto", "CA"];
+var searchHistoryId = [];
+// var cityName = [[0]="Toronto", "CA"];
+// ref DOM elements
+var searchHistory = document.getElementById("history");
+var searchForm = document.getElementById("search-form");
+
+// create functions
+function searchFormSubmit() {
+
+}
+function searchHistoryClick() {
+  
+}
+// event Listeners
+searchForm.addEventListener("submit", searchFormSubmit);
+searchHistory.addEventListener("click", searchHistoryClick);
+
+
+
+
+
+
 
 // create elements for main weather section //
 var col = document.createElement("div");

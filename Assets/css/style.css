@@ -47,4 +47,22 @@ button:active {
  height: 223px;
 }
 
+#forecast {
+ border: solid black 1px;
+ background-color: transparent;
+ width: 100%;
+ height: 223px;
+}
+
+.card-group {
+ display: inline-block;
+ border: solid black 1px;
+ background-color: darkblue;
+ color: white;
+ padding: 10px;
+ margin: 10px;
+ 
+}
+
+
 /* .card-group forecast-list in JS */
