@@ -1,20 +1,47 @@
-// js for WeatherMan rev 2022-02-06  revised 2022-03-03...
-// unclear still what this is, how inquirer needed here
-const { createPromptModule } = require("inquirer");
-
+// js for WeatherMan rev 2022-02-06  revised 2022-03-03...  2022-03-29
 // Open Weather API url & key; global variables
 var url = "https://api.openweathermap.org";
 var key = "76d9b9b69f8abf37f5df04749953bfe4";
-var searchHistoryId = [];
-// var cityName = [[0]="Toalronto", "CA"];
+ // var cityName = [[0]="Toronto", "CA"] as placeholder;
 // ref DOM elements
 var searchHistory = document.getElementById("history");
 var searchForm = document.getElementById("search-form");
 var searchInput = document.getElementById("search-input");
 var todayEl = document.getElementById("today");
 
-// fetchCoord declared but not called TBD
-function fetchCoord(search) {
+// search history and local storage
+function initSearchHistory() {
+  var previousCity = localStorage.getItem("search-history");
+  if (previousCity) {
+    searchHistoryId = JSON.parse(previousCity);
+  }
+  renderSearchHistory();
+}
+
+function appendToHistory () {
+  if (searchHistoryId.indexOf(search) !== -1) {
+    return;
+  }
+  searchHistoryId.push(search); 
+  localStorage.setItem("search-history", JSON.stringify(searchHistoryId));
+}
+ 
+function renderSearchHistory() {
+  searchHistory.innerHTML = "";
+  for (let index = searchHistoryId.length -1; index >= 0; index--) {
+ //   const element = array[index];
+    var btn = document.createElement("button");
+    btn.setAttribute("type", "button");
+    btn.setAttribute("aria-control", "today forecast");
+    btn.classList.add("history-btn", "btn-history");
+    btn.setAttribute("data-search", searchHistoryId[i]);
+    btn.textContent = searchHistoryId[i];
+    searchHistory.append(btn);
+  }
+}
+
+// fetchCoords for new search of coordinates and current weather
+function fetchCoords(search) {
   var apiUrl = `${url}/geo/1.0/direct?q=${search}&limit=5&appid=${key}`;
   fetch (apiUrl)
   .then (function (res) {
@@ -35,10 +62,6 @@ function fetchCoord(search) {
   });
 }
 
-function appendToHistory () {
-// TODO ... 
-}
-
 function renderItems(city, data) {
   renderCurrentWeather(city, data.current, data.timezone);
   renderForecast(data.daily, data.timezone);
@@ -52,6 +75,7 @@ function renderCurrentWeather(city, weather, timezone) {
   var uvi = weather.uvi;
   var weatherIcon = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
 
+  // renders current weather to DOM elements
   var card = document.createElement("div");
   var cardBody = document.createElement("div");
   var cardTitle = document.createElement("h5");
@@ -65,8 +89,6 @@ function renderCurrentWeather(city, weather, timezone) {
   card.setAttribute("class", "card");
   cardBody.setAttribute("class", "card-body");
   card.append(cardBody);
-
-  
 
   cardTitle.setAttribute("class", "card-title");
   tempEl.setAttribute("class", "card-text");
@@ -82,9 +104,9 @@ function renderCurrentWeather(city, weather, timezone) {
   windEl.textContent = `Wind: ${windKph} KPH`;
   humidityEl.textContent = `Humidity: ${humidity} %`;
   cardBody.append(cardTitle, tempEl, windEl, humidityEl);
+ // special case for uvi and variable button colours
   uviEl.textContent = "uvIndex: ";
-  uviBadge.classList.add ("btn", "btn-sm");
-
+  uviBadge.classList.add ("btn", "btn-sm")
   if (uvi < 3 ) {
     uviBadge.classList.add ("btn-success");  
   } else if (uvi < 7 ) {
@@ -92,20 +114,18 @@ function renderCurrentWeather(city, weather, timezone) {
   } else {
     uviBadge.classList.add ("btn-danger");
   }
-
   uviBadge.textContent = uvi;
   uviEl.append(uviBadge);
   cardBody.append(uviEl);
 
   todayEl.innerHTML='';
   todayEl.append(card);
-
 }
-
+// renders 5-day forescast cards
 function renderForecastCard (forecast, timezone) {
   var unixts = forecast.dt; 
   var iconUrl = `https://openweathermap.org/img/w/${forecast.weather[0].icon.png}`;
-  //description to add ?
+  //descriptions to write to html
   var tempC = forecast.temp.day;
   var windKph = forecast.wind_speed;
   var { humidity } = forecast;
@@ -117,8 +137,6 @@ function renderForecastCard (forecast, timezone) {
   var tempEl = document.createElement("p");
   var windEl = document.createElement("p");
   var humidityEl = document.createElement("p");
-  // var uviEl = document.createElement("p");
-  // var uviBadge = document.createElement("button");
   
   col.append(card);
   card.append(cardBody);
@@ -140,7 +158,7 @@ function renderForecastCard (forecast, timezone) {
   humidityEl.textContent = `Humidity: ${humidity} %`;
   forecastContainer.append(col);
 }
-
+// renders 5-day Forecast to DOM elements by date and timezone adjustment
 function renderForecast (dailyForecast, timezone) {
   var startDt = dayjs().tz(timezone).add(1, "day").startOf("day").unix();
   var endDt = dayjs().tz(timezone).add(6, "day").startOf("day").unix();
@@ -158,11 +176,11 @@ function renderForecast (dailyForecast, timezone) {
     }    
   }
 }
-
+// main fetch weather function by lat & lon and location name
 function fetchWeather (location) {
   var { lat, lon } = location;
   var city = location.name;
-  var apiUrl = `${url}/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,hourly&appid=${76d9b9b69f8abf37f5df04749953bfe4}`;
+  var apiUrl = `${url}/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,hourly&appid=${key}`;
   fetch (apiUrl)
   .then (function (res) {
     return res.json();
@@ -177,7 +195,7 @@ function fetchWeather (location) {
   });
 }
 
-// create functions
+// enters input values on search form and retrieves search history items
 function searchFormSubmit(e) {
   if (!searchInput.value) {
     return;
@@ -189,107 +207,15 @@ function searchFormSubmit(e) {
 }
 
 function searchHistoryClick(e) {
-  // TODO
+  if (!e.target.matches(".btn-history")) {
+    return;
+  }
+  var btn = e.target;
+  var search = btn.getAttributes("data-search");
+    fetchCoord(search);
 }
-
-initSearchHistory();
 
 // event Listeners
 searchForm.addEventListener("submit", searchFormSubmit);
 searchHistory.addEventListener("click", searchHistoryClick);
-
-
-
-
-
-
-// old code trying to drive html from js
-// create elements for main weather section //
-// var col = document.createElement("div");
-
-
-//forecastContainer.append(col);
-/* top of function here ? */
-
-
-//https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-/* a couple of inline fetches to check api operability -- these work (although data not yet sorted and sent to page)
-"https://api.openweathermap.org/data/2.5/weather?q=Ottawa&appid=76d9b9b69f8abf37f5df04749953bfe4";
-"https://api.openweathermap.org/data/2.5/forecast?q=Toronto&appid=76d9b9b69f8abf37f5df04749953bfe4";
-*/
-/*alternative fetch structure here */
-/* fetch api data for lon and lat */
-
-/*
-function fetchWeatherInfo() {
-
-var url ="https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&units=metric&appid=76d9b9b69f8abf37f5df04749953bfe4";
-
-fetch (url)
-  .then(function (response) {
-    return response.json();
-  })
-  .then(function (data) {
-    var lon = data.coord.lon;
-    var lat = data.coord.lat;
-  })
-
-  // fetch API data for 5-day forecast //
-  fetch ("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=76d9b9b69f8abf37f5df04749953bfe4");
-    .then(function (response) {
-      return response.json()    
-    })
-    .then(function (data) {
-      currentForecast(data);
-      fiveDayForecast(data.daily);
-    })
-
-}
-
-fetchWeatherInfo();
-
-// draft version: not useful until data retrieval is fixed.
-// scriptLS.js function to load saved data from localStorage.
-function loadSearchHistory() {
-  var size = JSON.parse(localStorage.getItem("size"));
-  for (var i = 0; i < size; i++) {
-   var key = "search" +i;
-   var text = JSON.parse(localStorage.getItem(key));
-   var historyBtn = $"<button>";
-   historyBtn.addClass("col-12 my-2 btn btn-secondary");
-   historyBtn.attr("id", key);
-   historyBtn.text(text);
-   $(".searchHistory").append(historyBtn);
-   searchHistoryId++;
-  }
- }
- 
- loadSearchHistory();
- 
- // update search history with new entry, using 8 entry max
- function updateSearchHistory() {
-  var historyBtn = $("<button>");
-  var text = $("#searchInfo").val();
-  historyBtn.addClass("col-12 my-2 btn.secondary");
-   if (searchHistoryId = 7) {
-    $("#search0").remove();
-    for (var i = 0; i < 8; i++) {
-     $("#search" + (i+1)).attr("id", "search" +i);
-     saveSearchHistory(idvalue, text);
-    }
-    searchHistoryId = 7;
- 
-    idvalue = "search" + searchHistoryId
-    historyBtn.attr("id", idvalue);
-    historyBtn.text(text);
-    $(".searchHistory").append(historyBtn);
-    searchHistoryId++;
-    saveSearchHistory(idvalue, text);
-   }
- }
- 
- function saveSearchHistory(id, text) {
-  localStorage.setItem(id, JSON.stringify(text));
-  localStorage.setItem("size", JSON.stringify(searchHistoryId)); 
- }
 
