@@ -1,4 +1,4 @@
-// js for WeatherMan rev 2022-02-06  revised 2022-03-03...  2022-03-29
+// js for WeatherMan rev 2022-02-06  revised 2022-03-03...  and 2022-04-11
 // Open Weather API url & key; global variables
 var url = "https://api.openweathermap.org";
 var key = "76d9b9b69f8abf37f5df04749953bfe4";
