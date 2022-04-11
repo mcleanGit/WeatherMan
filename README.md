@@ -1,8 +1,8 @@
 # 06 Server-Side APIs: Weather Dashboard
 
-## Note: this is a complete update and revision of a very incomplete version originally submitted on 2022-02-06. 
+## Note: this is a complete update and revision (2022-04-12) of a very incomplete version originally submitted on 2022-02-06. 
 
-At the time, the intention to return to the assignment was noted. However, the work was then largely set aside, remaining intermittent while other items took over, including a major team project. The Weather Dashboard was subsequently revisited earlier this month with additional research, code refactoring, and review of fundamentals with the assistance of a BCS Tutor. Due to other obligations it was not possible to complete the work until now. The GitHub repository is: https://github.com/mcleanGit/WeatherMan. And the deployed application can be found here:  TODO GitHub Pages.
+At the time, the intention to return to the assignment was noted. However, the work was then largely set aside, remaining intermittent while other items took over, including a major team project. Now two major team projects. The Weather Dashboard was subsequently revisited earlier last month with additional research, code refactoring, and review of fundamentals with the assistance of a BCS Tutor. Due to other obligations it was not possible to complete the work until now. The GitHub repository is: https://github.com/mcleanGit/WeatherMan. And the deployed application can be found here:  TODO GitHub Pages.
 
 The original assignment task is shown here:
 Developers are often tasked with retrieving data from another application's API and using it in the context of their own. Third-party APIs allow developers to access their data and functionality by making requests with specific parameters to a URL. Your challenge is to build a weather dashboard that will run in the browser and feature dynamically updated HTML and CSS.
