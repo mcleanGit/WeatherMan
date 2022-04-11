@@ -202,7 +202,7 @@ function searchFormSubmit(e) {
   }
   e.preventDefault();
   var search = searchInput.value.trim();
-  fetchCoord (search);
+  fetchCoords (search);
   searchInput.value = '';
 }
 
@@ -212,7 +212,7 @@ function searchHistoryClick(e) {
   }
   var btn = e.target;
   var search = btn.getAttributes("data-search");
-    fetchCoord(search);
+    fetchCoords(search);
 }
 
 // event Listeners
